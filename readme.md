@@ -17,3 +17,7 @@ sysctl -w fs.file-max=131072
 ulimit -n 131072
 ulimit -u 8192
 ```
+
+Elastic Search reference > https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html#docker-prod-prerequisites
+
+SonarQube refs > https://docs.sonarqube.org/latest/requirements/requirements/

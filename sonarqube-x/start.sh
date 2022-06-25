@@ -1,36 +1,38 @@
 #!/bin/bash
 
+source ../scripts/runDocker.sh
+
 DOCKERFILE="./Dockerfile"
-SERVICE_NAME="sonarqube1"
-IMAGE_NAME="sonarqube1"
-PLATFORM="linux/x86_64"
+APP_NAME="sonarqube-x"
 PORT="9000"
 
-function runCommand {
-    cmd=$1
-    msg=$2
-    exitonfail=$3
+runDocker $DOCKERFILE $APP_NAME $PORT
 
-    echo "-----------------------------------------------"
-    echo "[RUN]: $msg"
-    $cmd
-    status=$?
-    if [ ! $status -eq 0 ]; then
-        if ((exitonfail == true)); then
-            exit 1
-        fi
-    fi
-}
+# function runCommand {
+#     cmd=$1
+#     msg=$2
+#     exitonfail=$3
 
-BUILD_ARGS="--force-rm  --platform $PLATFORM"
-CREATE_ARGS="--ulimit nofile=131072 --ulimit nproc=8192"
+#     echo "-----------------------------------------------"
+#     echo "[RUN]: $msg"
+#     $cmd
+#     status=$?
+#     if [ ! $status -eq 0 ]; then
+#         if ((exitonfail == true)); then
+#             exit 1
+#         fi
+#     fi
+# }
 
-runCommand "docker build $BUILD_ARGS -f $DOCKERFILE -t $IMAGE_NAME ." "Rebuild Image '$IMAGE_NAME'" true
+# BUILD_ARGS="--force-rm  --platform $PLATFORM"
+# CREATE_ARGS="--ulimit nofile=131072 --ulimit nproc=8192"
 
-runCommand "docker container rm --force $SERVICE_NAME" "Removing current container"
+# runCommand "docker build $BUILD_ARGS -f $DOCKERFILE -t $IMAGE_NAME ." "Rebuild Image '$IMAGE_NAME'" true
 
-runCommand "docker create $CREATE_ARGS --name=$SERVICE_NAME --publish=$PORT:$PORT $IMAGE_NAME" "Building container $SERVICE_NAME over port=$PORT" true
+# runCommand "docker container rm --force $SERVICE_NAME" "Removing current container"
 
-runCommand "docker container start $SERVICE_NAME" "Running $SERVICE_NAME..."
+# runCommand "docker create $CREATE_ARGS --name=$SERVICE_NAME --publish=$PORT:$PORT $IMAGE_NAME" "Building container $SERVICE_NAME over port=$PORT" true
+
+# runCommand "docker container start $SERVICE_NAME" "Running $SERVICE_NAME..."
 
 # docker run -t -d --name=$SERVICE_NAME --publish=$PORT:$PORT $IMAGE_NAME

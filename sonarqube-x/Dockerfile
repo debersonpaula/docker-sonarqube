@@ -1,11 +1,11 @@
 FROM alpine:3.13.10
 
-RUN set -eux; \
-    ulimit -n 131072; \
-    ulimit -u 8192;
+# RUN set -eux; \
+#     ulimit -n 131072; \
+#     ulimit -u 8192;
 
-RUN echo 'vm.max_map_count=262144' >>/etc/sysctl.conf
-RUN echo 'fs.file-max=65536' >>/etc/sysctl.conf
+# RUN echo 'vm.max_map_count=262144' >>/etc/sysctl.conf
+# RUN echo 'fs.file-max=65536' >>/etc/sysctl.conf
 
 ENV JAVA_VERSION="jdk-11.0.11+9" \
     LANG='en_US.UTF-8' \
@@ -135,6 +135,8 @@ RUN set -eux; \
     apk del --purge build-dependencies;
 
 COPY --chown=sonarqube:sonarqube run.sh sonar.sh ${SONARQUBE_HOME}/bin/
+
+RUN echo 'sonar.search.javaAdditionalOpts=-Dbootstrap.system_call_filter=false' >>/opt/sonarqube/conf/sonar.properties
 
 WORKDIR ${SONARQUBE_HOME}
 EXPOSE 9000
