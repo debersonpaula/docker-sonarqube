@@ -1,8 +1,8 @@
 version: "3"
 services:
-  sonarqube:
+  sonarqubeV3:
     platform: linux/x86_64
-    image: sonarqube:8.9.9-community
+    image: sonarqube:9.5-community
     depends_on:
       - db
     environment:
@@ -15,14 +15,6 @@ services:
       - sonarqube_logs:/opt/sonarqube/logs
     ports:
       - "9000:9000"
-    ulimits:
-      nproc: 8192
-      nofile:
-        soft: 131072
-        hard: 131072
-    sysctls:
-      vm.max_map_count: 524288
-      fs.file-max: 131072
   db:
     platform: linux/x86_64
     image: postgres:12
