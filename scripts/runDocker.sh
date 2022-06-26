@@ -6,10 +6,11 @@ function runDocker() {
     DOCKERFILE=$1
     IMAGE_NAME=$2
     SERVICE_NAME="$2-app"
-    PLATFORM="linux/x86_64"
+    # PLATFORM="linux/x86_64"
     PORT=$3
 
-    BUILD_ARGS="--force-rm  --platform $PLATFORM"
+    # BUILD_ARGS="--force-rm  --platform $PLATFORM"
+    BUILD_ARGS="--force-rm"
     # CREATE_ARGS="--ulimit nofile=131072 --ulimit nproc=8192"
     CREATE_ARGS=""
 
