@@ -58,6 +58,6 @@ if [[ "$1" = '/opt/sonarqube/bin/sonar.sh' ]]; then
     fi
 fi
 
-echo 'sonar.search.javaAdditionalOpts=-Dbootstrap.system_call_filter=false' >>/opt/sonarqube/conf/sonar.properties
+# echo 'sonar.search.javaAdditionalOpts=-Dbootstrap.system_call_filter=false' >>/opt/sonarqube/conf/sonar.properties
 
 exec "$@"
