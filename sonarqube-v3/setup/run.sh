@@ -1,53 +1,73 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -euo pipefail
 
+echo "==============================================================================="
+echo " "
+echo "Starting services..."
+echo " "
+
 PGDATA=$PGDATA
-# DB_USER="sonarqube"
-# DB_PASS="sonarqube"
+DB_USER="sonarqube"
+DB_PASS="sonarqube"
 
-# # echo "Set up DB for SonarQube...."
-# # echo -e "postgres\npostgres" | passwd postgres
+declare -a sq_opts=()
+set_prop() {
+    if [ "$2" ]; then
+        sq_opts+=("-D$1=$2")
+    fi
+}
 
-echo "============================================================"
-echo "Start Database...."
-echo "============================================================"
+startDataBase() {
+  echo "Starting DB..."
+  su-exec postgres pg_ctl start -D $PGDATA
+}
 
-sleep 1;
+stopDataBase() {
+  echo "Killing DB..."
+  su-exec postgres pg_ctl stop -D $PGDATA
+  exit
+}
 
-su-exec postgres pg_ctl start -D $PGDATA
+echo "==============================================================================="
+echo "Start Database..."
 
-su-exec sonarqube echo "From SonarQube"
-# sudo -i -u sonarqube sh <<EOF
-#     echo "From SonarQube"
-# EOF
+startDataBase
+trap stopDataBase SIGINT SIGQUIT SIGTERM
 
-# # Sonar Script setup
-# sed -i 's/#RUN_AS_USER=/RUN_AS_USER=sonarqube/g' /opt/sonarqube/bin/linux-x86-64/sonar.sh
+echo "==============================================================================="
+echo "SonarQube setup...."
 
-# # DB Connection setup
-# echo 'sonar.jdbc.username=sonarqube' >>/opt/sonarqube/conf/sonar.properties
-# echo 'sonar.jdbc.password=$DB_PASS' >>/opt/sonarqube/conf/sonar.properties
-# # echo 'sonar.jdbc.url=jdbc:postgresql://localhost:5432/sonarqube' >>/opt/sonarqube/conf/sonar.properties
-# echo 'sonar.jdbc.url=jdbc:postgresql://localhost/sonarqube' >>/opt/sonarqube/conf/sonar.properties
+# Set sonar for execution
+set -- /scripts/setup/run-sonar.sh
 
-# # Elasticsearch storage path
-# echo 'sonar.path.data=/var/sonarqube/data' >>/opt/sonarqube/conf/sonar.properties
-# echo 'sonar.path.temp=/var/sonarqube/temp' >>/opt/sonarqube/conf/sonar.properties
-# mkdir /var/sonarqube
-# # mkdir /var/sonarqube/temp
-# chown -R sonarqube:sonarqube -R /var/sonarqube
+# Set props
+set_prop "sonar.jdbc.username" "$DB_USER"
+set_prop "sonar.jdbc.password" "$DB_PASS"
+set_prop "sonar.jdbc.url" "jdbc:postgresql://localhost:5432/sonarqube"
 
-# # Web Server
-# echo 'sonar.web.host=0.0.0.0' >>/opt/sonarqube/conf/sonar.properties
-# echo 'sonar.web.port=80' >>/opt/sonarqube/conf/sonar.properties
-# echo 'sonar.web.context=/sonarqube' >>/opt/sonarqube/conf/sonar.properties
+# Define exec param
+if [ ${#sq_opts[@]} -ne 0 ]; then
+    set -- "$@" "${sq_opts[@]}"
+fi
 
-# # echo "networkaddress.cache.ttl=5" >> /usr/lib/jvm/java-11-openjdk-amd64/conf/security/java.security
-# echo 'sonar.search.javaAdditionalOpts=-Dbootstrap.system_call_filter=false' >>/opt/sonarqube/conf/sonar.properties
+echo "==============================================================================="
+echo "Fixing permissions ..."
 
-# /opt/sonarqube/bin/linux-x86-64/sonar.sh start
-# /opt/sonarqube/bin/linux-x86-64/sonar.sh status
-# /opt/sonarqube/bin/linux-x86-64/sonar.sh console
+chown -R "$(id -u):$(id -g)" "${SQ_DATA_DIR}" "${SQ_EXTENSIONS_DIR}" "${SQ_LOGS_DIR}" "${SQ_TEMP_DIR}" 2>/dev/null || :
+chmod -R 700 "${SQ_DATA_DIR}" "${SQ_EXTENSIONS_DIR}" "${SQ_LOGS_DIR}" "${SQ_TEMP_DIR}" 2>/dev/null || :
+chown -R sonarqube:sonarqube "${SQ_DATA_DIR}" "${SQ_EXTENSIONS_DIR}" "${SQ_LOGS_DIR}" "${SQ_TEMP_DIR}"
 
-tail -f dev/null
+echo "==============================================================================="
+echo "Starting SonarQube ..."
+# su-exec sonarqube "$0" "$@"
+# exec su-exec sonarqube "$0" "$@"
+# exec "$@"
+su-exec sonarqube java -jar lib/sonar-application-"${SONAR_VERSION}".jar -Dsonar.log.console=true
+# tail -f /dev/null
+
+# echo "Params = $@"
+
+while true; do
+  sleep 5
+done

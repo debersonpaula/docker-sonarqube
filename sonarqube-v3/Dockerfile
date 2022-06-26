@@ -25,14 +25,16 @@ RUN apk add --no-cache sudo
 RUN apk add --no-cache curl
 RUN apk add --no-cache gnupg
 RUN apk add --no-cache su-exec
+RUN apk add --no-cache bash
 RUN curl --fail --location --output sonarqube.zip --show-error "${SONARQUBE_ZIP_URL}"
 
 # Copy setup scripts
 COPY setup /scripts/setup
-RUN chmod +x /scripts/setup/db.sh
-RUN chmod +x /scripts/setup/openrc.sh
-RUN chmod +x /scripts/setup/sonar.sh
-RUN chmod +x /scripts/setup/run.sh
+# RUN chmod +x /scripts/setup/db.sh
+# RUN chmod +x /scripts/setup/openrc.sh
+# RUN chmod +x /scripts/setup/sonar.sh
+# RUN chmod +x /scripts/setup/run.sh
+# RUN chmod +x /scripts/setup/run-sonar.sh
 
 # Workaround for the Error Message in OpenRC
 RUN /scripts/setup/openrc.sh
@@ -43,8 +45,13 @@ RUN /scripts/setup/db.sh
 # SonarQube
 RUN /scripts/setup/sonar.sh
 
+WORKDIR ${SONARQUBE_HOME}
+
 # EXEC
 STOPSIGNAL SIGINT
-EXPOSE 5432
+EXPOSE 9000 5432
+# ENTRYPOINT ["/scripts/setup/run.sh"]
+# CMD ["/scripts/setup/run-sonar.sh"]
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 ENTRYPOINT ["/scripts/setup/run.sh"]
+CMD ["/scripts/setup/run-sonar.sh"]
