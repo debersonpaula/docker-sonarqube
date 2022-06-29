@@ -1,0 +1,27 @@
+{
+  "taskDefinition": "sonar-ecs:1",
+  "cluster": "sonar-cluster",
+  "loadBalancers": [
+    {
+      "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:664190150621:targetgroup/sonar-target-1/877c711847b87353",
+      "containerName": "sonar-server",
+      "containerPort": 9000
+    }
+  ],
+  "desiredCount": 1,
+  "launchType": "FARGATE",
+  "schedulingStrategy": "REPLICA",
+  "deploymentController": {
+    "type": "CODE_DEPLOY"
+  },
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "subnet-0a7788026afc14743",
+        "subnet-0ba01de578a8c0546"
+      ],
+      "securityGroups": ["sg-0f4a79ca6fa5a7063"],
+      "assignPublicIp": "ENABLED"
+    }
+  }
+}
