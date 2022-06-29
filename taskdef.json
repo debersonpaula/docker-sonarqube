@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "sonar-server",
-      "image": "<IMAGE1_NAME>",
+      "image": "ecr-aaa-sonarqube",
       "essential": true,
       "portMappings": [
         {
@@ -11,7 +11,16 @@
           "protocol": "tcp",
           "containerPort": 9000
         }
-      ]
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "awslogs-sonarqube",
+          "awslogs-region": "us-west-1",
+          "awslogs-stream-prefix": "awslogs-sonarqube-server"
+        }
+      }
     }
   ],
   "requiresCompatibilities": ["FARGATE"],
