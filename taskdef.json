@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "sonar-server",
-      "image": "ecr-aaa-sonarqube",
+      "image": "<IMAGE1_NAME>",
       "essential": true,
       "portMappings": [
         {
