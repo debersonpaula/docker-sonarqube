@@ -3,7 +3,7 @@
   "cluster": "sonar-cluster",
   "loadBalancers": [
     {
-      "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:664190150621:targetgroup/sonar-target-1/877c711847b87353",
+      "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:664190150621:targetgroup/sonar-target-v1/1719dd67233da08f",
       "containerName": "sonar-server",
       "containerPort": 9000
     }

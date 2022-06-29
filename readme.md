@@ -33,4 +33,4 @@ aws ecs register-task-definition --cli-input-json file://taskdef.json
 ```
 
 
-aws ecs create-service --service-name sonar-service --cli-input-json file://create-service.json
+aws ecs create-service --service-name sonar-service-v1 --cli-input-json file://create-service.json
