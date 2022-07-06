@@ -7,6 +7,7 @@ function runDocker() {
     IMAGE_NAME=$2
     SERVICE_NAME="$2-app"
     # PLATFORM="linux/x86_64"
+    # PLATFORM="linux/amd64"
     PORT=$3
 
     # BUILD_ARGS="--force-rm  --platform $PLATFORM"

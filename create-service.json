@@ -1,5 +1,5 @@
 {
-  "taskDefinition": "sonar-ecs:7",
+  "taskDefinition": "sonar-ecs:9",
   "cluster": "sonar-cluster",
   "loadBalancers": [
     {
